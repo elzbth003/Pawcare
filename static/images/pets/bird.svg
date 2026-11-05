@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="birdBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <filter id="softShadowBird" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="46" fill="#F1F5F9" filter="url(#softShadowBird)"/>
+
+  <!-- Crest Feathers -->
+  <path d="M50 25 Q46 15 54 18 Q50 24 50 28" fill="#FBBF24"/>
+  <path d="M52 25 Q58 16 63 20 Q56 26 53 30" fill="#F59E0B"/>
+
+  <!-- Bird Body -->
+  <ellipse cx="50" cy="54" rx="25" ry="24" fill="url(#birdBody)"/>
+
+  <!-- Wing -->
+  <ellipse cx="60" cy="58" rx="14" ry="10" fill="#0369A1" transform="rotate(-15 60 58)"/>
+
+  <!-- Belly -->
+  <ellipse cx="44" cy="58" rx="14" ry="16" fill="#BAE6FD"/>
+
+  <!-- Eye -->
+  <circle cx="42" cy="46" r="4" fill="#0F172A"/>
+  <circle cx="43.5" cy="44.5" r="1.3" fill="#FFFFFF"/>
+
+  <!-- Beak -->
+  <polygon points="32,49 20,53 32,56" fill="#F59E0B" stroke="#D97706" stroke-width="1"/>
+
+  <!-- Cheek Blush -->
+  <circle cx="46" cy="53" r="3" fill="#F472B6" opacity="0.6"/>
+</svg>

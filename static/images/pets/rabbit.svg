@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bunnyFur" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="bunnyPink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE7F3"/>
+      <stop offset="100%" stop-color="#F472B6"/>
+    </linearGradient>
+    <filter id="softShadowBunny" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="46" fill="#F1F5F9" filter="url(#softShadowBunny)"/>
+
+  <!-- Long Bunny Ears -->
+  <ellipse cx="36" cy="28" rx="8" ry="22" fill="url(#bunnyFur)" transform="rotate(-10 36 28)"/>
+  <ellipse cx="36" cy="28" rx="4.5" ry="17" fill="url(#bunnyPink)" transform="rotate(-10 36 28)"/>
+
+  <ellipse cx="64" cy="28" rx="8" ry="22" fill="url(#bunnyFur)" transform="rotate(10 64 28)"/>
+  <ellipse cx="64" cy="28" rx="4.5" ry="17" fill="url(#bunnyPink)" transform="rotate(10 64 28)"/>
+
+  <!-- Head -->
+  <circle cx="50" cy="58" r="26" fill="url(#bunnyFur)"/>
+
+  <!-- Cheeks Blush -->
+  <circle cx="34" cy="63" r="5" fill="#FBCFE8" opacity="0.7"/>
+  <circle cx="66" cy="63" r="5" fill="#FBCFE8" opacity="0.7"/>
+
+  <!-- Eyes -->
+  <circle cx="39" cy="54" r="3.5" fill="#374151"/>
+  <circle cx="40" cy="53" r="1.2" fill="#FFFFFF"/>
+  <circle cx="61" cy="54" r="3.5" fill="#374151"/>
+  <circle cx="62" cy="53" r="1.2" fill="#FFFFFF"/>
+
+  <!-- Nose -->
+  <polygon points="48,61 52,61 50,63.5" fill="#F472B6"/>
+
+  <!-- Mouth -->
+  <path d="M50 63.5 L50 66 Q47 68 44 66 M50 66 Q53 68 56 66" stroke="#475569" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+
+  <!-- Whiskers -->
+  <path d="M26 62 L36 63 M28 67 L36 65" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M74 62 L64 63 M72 67 L64 65" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

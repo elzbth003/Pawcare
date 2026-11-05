@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const appointmentForm = document.getElementById("appointmentForm");
     const modalTitle = document.getElementById("modalTitle");
     const formAppointmentId = document.getElementById("formAppointmentId");
+    const previewPetImg = document.getElementById("previewPetImg");
+    const petTypeInput = document.getElementById("petTypeInput");
     
     const deleteConfirmModal = document.getElementById("deleteConfirmModal");
     const closeDeleteModalBtn = document.getElementById("closeDeleteModalBtn");
@@ -31,6 +33,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let appointmentToDelete = null;
     let searchDebounceTimer = null;
+
+    // Helper: Select matching pet avatar based on species / breed
+    function getPetImage(petType) {
+        const type = (petType || '').toLowerCase();
+        if (type.includes('dog') || type.includes('puppy') || type.includes('hound') || 
+            type.includes('retriever') || type.includes('shepherd') || type.includes('poodle') || 
+            type.includes('beagle') || type.includes('labrador') || type.includes('terrier')) {
+            return '/static/images/pets/dog.svg';
+        }
+        if (type.includes('cat') || type.includes('kitten') || type.includes('feline') || 
+            type.includes('siamese') || type.includes('shorthair') || type.includes('persian')) {
+            return '/static/images/pets/cat.svg';
+        }
+        if (type.includes('rabbit') || type.includes('bunny') || type.includes('hare') || type.includes('lop')) {
+            return '/static/images/pets/rabbit.svg';
+        }
+        if (type.includes('bird') || type.includes('parrot') || type.includes('canary') || type.includes('finch')) {
+            return '/static/images/pets/bird.svg';
+        }
+        return '/static/images/pets/other.svg';
+    }
+
+    // Live avatar preview in modal when typing breed/species
+    if (petTypeInput && previewPetImg) {
+        petTypeInput.addEventListener("input", (e) => {
+            previewPetImg.src = getPetImage(e.target.value);
+        });
+    }
 
     // Initialize clock
     function updateClock() {
@@ -48,11 +78,11 @@ document.addEventListener("DOMContentLoaded", () => {
         
         let iconSvg = '';
         if (type === 'success') {
-            iconSvg = `<svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            iconSvg = `<svg viewBox="0 0 20 20" width="18" height="18" fill="#059669">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>`;
         } else {
-            iconSvg = `<svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            iconSvg = `<svg viewBox="0 0 20 20" width="18" height="18" fill="#dc2626">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
             </svg>`;
         }
@@ -103,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const minutes = parts[1];
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12;
-                hours = hours ? hours : 12; // 0 should be 12
+                hours = hours ? hours : 12;
                 return `${hours}:${minutes} ${ampm}`;
             }
             return timeStr;
@@ -141,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const appointments = await response.json();
             
             renderAppointments(appointments);
-            appointmentCountDisplay.textContent = `Showing ${appointments.length} appointment${appointments.length === 1 ? '' : 's'}`;
+            appointmentCountDisplay.textContent = `Showing ${appointments.length} patient appointment${appointments.length === 1 ? '' : 's'}`;
         } catch (err) {
             console.error("Error loading appointments:", err);
             tableBody.innerHTML = `
@@ -155,28 +185,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Render Table Rows
+    // Render Table Rows with Pet Avatars
     function renderAppointments(appointments) {
         if (!appointments || appointments.length === 0) {
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="6" class="empty-state">
-                        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        <p>No appointments found matching your criteria.</p>
+                        <img src="/static/images/empty-illustration.svg" alt="No appointments" class="empty-img">
+                        <p style="font-weight: 600; color: var(--text-secondary);">No appointments found matching your criteria.</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Try adjusting your search query or clear filters.</p>
                     </td>
                 </tr>
             `;
             return;
         }
 
-        tableBody.innerHTML = appointments.map(apt => `
+        tableBody.innerHTML = appointments.map(apt => {
+            const petImgSrc = getPetImage(apt.pet_type);
+            return `
             <tr data-id="${apt.id}">
                 <td>
                     <div class="pet-cell">
-                        <span class="pet-name">${escapeHtml(apt.pet_name)}</span>
-                        <span class="pet-type">${escapeHtml(apt.pet_type)}</span>
+                        <div class="pet-avatar-wrap">
+                            <img src="${petImgSrc}" alt="${escapeHtml(apt.pet_type)}" class="pet-avatar-img">
+                        </div>
+                        <div class="pet-meta">
+                            <span class="pet-name">${escapeHtml(apt.pet_name)}</span>
+                            <span class="pet-type">${escapeHtml(apt.pet_type)}</span>
+                        </div>
                     </div>
                 </td>
                 <td>
@@ -209,12 +245,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
                 <td class="text-right">
                     <div class="action-buttons">
-                        <button class="btn-table-action edit-btn" title="Edit Appointment" data-id="${apt.id}">
+                        <button class="btn-table-neu edit-btn" title="Edit Appointment" data-id="${apt.id}">
                             <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
                                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                             </svg>
                         </button>
-                        <button class="btn-table-action delete-action delete-btn" title="Delete Appointment" data-id="${apt.id}" data-name="${escapeHtml(apt.pet_name)}">
+                        <button class="btn-table-neu delete-action delete-btn" title="Delete Appointment" data-id="${apt.id}" data-name="${escapeHtml(apt.pet_name)}">
                             <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
@@ -222,7 +258,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
 
         // Attach event listeners for inline status change
         document.querySelectorAll('.status-select-inline').forEach(select => {
@@ -235,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Attach event listeners for Edit
         document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
                 openEditModal(id);
             });
@@ -243,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Attach event listeners for Delete
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
                 const name = btn.getAttribute('data-name');
                 openDeleteModal(id, name);
@@ -271,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {
             console.error("Error updating status:", err);
             showToast(err.message, "error");
-            loadAppointments(); // Revert back to DB state
+            loadAppointments();
         }
     }
 
@@ -281,6 +318,9 @@ document.addEventListener("DOMContentLoaded", () => {
         modalTitle.textContent = "New Appointment";
         appointmentForm.reset();
         
+        // Default avatar
+        previewPetImg.src = "/static/images/pets/dog.svg";
+
         // Default date to today, status to Scheduled
         const today = new Date().toISOString().split('T')[0];
         document.getElementById("dateInput").value = today;
@@ -300,6 +340,8 @@ document.addEventListener("DOMContentLoaded", () => {
             formAppointmentId.value = apt.id;
             modalTitle.textContent = `Edit Appointment: ${apt.pet_name}`;
             
+            previewPetImg.src = getPetImage(apt.pet_type);
+
             document.getElementById("petNameInput").value = apt.pet_name || "";
             document.getElementById("petTypeInput").value = apt.pet_type || "";
             document.getElementById("ownerNameInput").value = apt.owner_name || "";

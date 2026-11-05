@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="pawGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#0F766E"/>
+    </linearGradient>
+    <filter id="softShadowPaw" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="46" fill="#F1F5F9" filter="url(#softShadowPaw)"/>
+
+  <!-- Paw Pad Main -->
+  <ellipse cx="50" cy="62" rx="19" ry="15" fill="url(#pawGradient)"/>
+  <ellipse cx="50" cy="60" rx="14" ry="10" fill="#14B8A6" opacity="0.4"/>
+
+  <!-- Toe Pads -->
+  <ellipse cx="28" cy="46" rx="6.5" ry="9" fill="url(#pawGradient)" transform="rotate(-25 28 46)"/>
+  <ellipse cx="42" cy="38" rx="6.5" ry="9" fill="url(#pawGradient)" transform="rotate(-10 42 38)"/>
+  <ellipse cx="58" cy="38" rx="6.5" ry="9" fill="url(#pawGradient)" transform="rotate(10 58 38)"/>
+  <ellipse cx="72" cy="46" rx="6.5" ry="9" fill="url(#pawGradient)" transform="rotate(25 72 46)"/>
+</svg>

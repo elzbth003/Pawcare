@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <defs>
+    <linearGradient id="clinicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0D9488" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  
+  <rect x="15" y="15" width="130" height="130" rx="36" fill="url(#clinicGrad)" filter="url(#badgeShadow)"/>
+  
+  <!-- Subtle inner gloss border -->
+  <rect x="17" y="17" width="126" height="126" rx="34" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2"/>
+
+  <!-- Stethoscope / Cross / Paw combo -->
+  <!-- Cross -->
+  <rect x="70" y="45" width="20" height="50" rx="6" fill="#FFFFFF" opacity="0.95"/>
+  <rect x="55" y="60" width="50" height="20" rx="6" fill="#FFFFFF" opacity="0.95"/>
+
+  <!-- Small Paw in the center of the cross -->
+  <ellipse cx="80" cy="71" rx="5" ry="4" fill="#0D9488"/>
+  <circle cx="75" cy="65" r="1.8" fill="#0D9488"/>
+  <circle cx="80" cy="63" r="1.8" fill="#0D9488"/>
+  <circle cx="85" cy="65" r="1.8" fill="#0D9488"/>
+
+  <!-- Little heart on bottom corner -->
+  <path d="M102 96 C102 92, 107 90, 110 93 C113 90, 118 92, 118 96 C118 102, 110 106, 110 106 C110 106, 102 102, 102 96 Z" fill="#F43F5E"/>
+</svg>
