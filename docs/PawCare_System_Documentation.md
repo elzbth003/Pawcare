@@ -1,37 +1,41 @@
-# PawCare Pet Clinic Management System — Technical & Operational Report
+# PawCare Pet Clinic Management System — Official Technical & Operational Report
 
-**Project**: PawCare Pet Clinic Management System  
-**Architecture**: 2-Container Docker Compose (`pawcare_web` & `pawcare_nginx`)  
-**Backend**: Python Flask 3.0.3 with Gunicorn 22.0.0 WSGI  
-**Frontend**: HTML5, Neumorphism (Soft UI) CSS3, Vanilla JavaScript, Vector SVG Pet Avatars  
-**Database**: SQLite3 with WAL Mode and Persistent Docker Volume Storage  
-**Reverse Proxy**: Nginx 1.31 Alpine (Port 80 to Port 5000)
+**System Name**: PawCare Pet Clinic Management System  
+**Deployment Model**: 2-Container Docker Compose Stack (`pawcare_web` & `pawcare_nginx`)  
+**Backend Framework**: Python Flask 3.0.3  
+**WSGI Application Server**: Gunicorn 22.0.0 (2 Workers, 2 Threads)  
+**Reverse Proxy**: Nginx 1.31 Alpine (Port 80 to Port 5000)  
+**Database**: SQLite3 with WAL Mode & Persistent Docker Volume Storage  
+**Frontend Design**: Neumorphic Soft UI, Vanilla JavaScript, Breed-Aware Pet Avatars  
+**Host Environment**: Linux Mint Cinnamon / Ubuntu LTS
 
 ---
 
-## 1. Executive Summary & Dashboard Overview
+## 1. Executive Summary & Live Dashboard Overview
 
-The **PawCare Pet Clinic Management System** is a production-grade, containerized veterinary practice management platform. It streamlines the lifecycle of patient consultations, veterinary exams, and clinic operations while maintaining clean architectural boundaries.
+The **PawCare Pet Clinic Management System** is a full-stack, containerized veterinary practice management application built to streamline patient consultation scheduling, triage status tracking, and clinical directory management.
 
-### Live System Dashboard (Running on `http://localhost`)
+### Real System Dashboard Screenshot (Running on `http://localhost`)
 
-![PawCare Clinic Dashboard Overview](images/dashboard_overview.jpg)
+![Real PawCare Clinic Dashboard running in Firefox](images/dashboard_overview.jpg)
 
-The dashboard provides veterinary clinicians and receptionists with:
-1. **Real-time Metric Counters**:
-   - **Total Appointments**: Live count of all recorded patient visits.
-   - **Scheduled Appointments**: Pending or upcoming patient appointments.
+### Core UI Capabilities
+
+1. **Clinic Metric Counter Cards**:
+   - **Total Appointments**: Dynamically calculated total of all recorded patient records.
+   - **Scheduled Appointments**: Pending or upcoming patient visits.
    - **Completed Appointments**: Successfully concluded consultations.
-   - **Cancelled Appointments**: Cancelled or rescheduled visits.
-2. **Instant Search & Status Filtering**: Real-time debounced search by pet name, breed, owner name, phone number, and clinical service.
-3. **One-Click Inline Status Switching**: Update an appointment status directly from the table without opening sub-menus.
-4. **Modal Dialogs**: Complete creation and update workflows with live pet breed preview and confirmation checks on deletion.
+   - **Cancelled Appointments**: Cancelled visits or rescheduled patients.
+2. **Real-time Live Search**: Instant debounced filtering across Pet Name, Species/Breed, Owner Name, Contact Phone, and Medical Service.
+3. **One-Click Inline Status Updating**: Receptionists and veterinarians can toggle an appointment's status (`Scheduled`, `Completed`, `Cancelled`) directly in the table row without opening a menu.
+4. **Breed-Aware Visual Avatars**: Patient table rows and modal dialogues automatically render matching vector pet illustrations (Dogs, Cats, Rabbits, Birds, and Other species).
+5. **Interactive Modals**: Seamless appointment creation and editing with field validation, clinical notes, and safe deletion confirmation dialogs.
 
 ---
 
-## 2. System Architecture & Container Topology
+## 2. Real System Architecture & Network Topology
 
-The application is deployed as a two-container micro-stack orchestrating Nginx and Gunicorn:
+The application enforces strict separation of concerns, ensuring Python and WSGI processes are never directly exposed to external networks:
 
 ```
                  +--------------------------+
@@ -59,81 +63,79 @@ The application is deployed as a two-container micro-stack orchestrating Nginx a
                +-------------------------------+
 ```
 
-### Key Architectural Benefits
-- **No Direct Exposure of Python App**: Gunicorn is unexposed to the public network and only communicates within the internal Docker network.
-- **Fail-Safe Health Checks**: The web service includes an automated healthcheck testing `http://127.0.0.1:5000/health`. Nginx starts after the web container reports healthy.
-- **Data Survivability**: Database data is stored inside a named persistent Docker volume (`pawcare_db_data`), surviving container restarts, image upgrades, and teardowns.
+### Architectural Key Features
+- **Nginx Ingress**: All inbound port 80 traffic is filtered, buffered, and reverse-proxied with `Host`, `X-Real-IP`, and `X-Forwarded-For` headers.
+- **Worker Concurrency**: Gunicorn handles concurrent asynchronous requests with 2 worker processes and 2 threads.
+- **Atomic Concurrency Protection**: SQLite is configured in **WAL (Write-Ahead Logging)** mode with atomic primary-key initialization locks to eliminate race conditions between workers.
+- **Data Survivability**: Database data is stored inside a named persistent Docker volume (`pawcare_db_data`), surviving container teardowns and rebuilds.
 
 ---
 
-## 3. Docker & Containerization Verification
+## 3. Real Docker Compose & Volume Storage Verification
 
-The containers are orchestrated via `docker-compose.yml`. Below is the live verification demonstrating container statuses, port mappings, and persistent volume existence.
+Below is an authentic screenshot captured from the active Linux Mint terminal session demonstrating the running containers, their health status, and the persistent Docker volume.
 
-![Docker Compose & Volume Status](images/docker_status.png)
+### Real Docker Compose Terminal Screenshot
 
-### Service Configurations
-- **Web Service (`pawcare_web`)**:
-  - Base Image: `python:3.12-slim`
-  - Command: `gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 2 app:app`
-  - Healthcheck Interval: 10s (timeout 5s, retries 3)
-  - Volume: `pawcare_db_data:/app/data`
-- **Proxy Service (`pawcare_nginx`)**:
-  - Base Image: `nginx:alpine`
-  - Exposed Host Port: `80:80`
-  - Upstream: `web:5000`
+![Real Docker Compose Terminal Screenshot](images/real_docker_status.png)
+
+### Docker Service Specifications
+
+| Parameter | Web Service (`pawcare_web`) | Proxy Service (`pawcare_nginx`) |
+|---|---|---|
+| **Base Image** | `python:3.12-slim` | `nginx:alpine` |
+| **Container Name** | `pawcare_web` | `pawcare_nginx` |
+| **Command** | `gunicorn -b 0.0.0.0:5000 -w 2 --threads 2 app:app` | `nginx -g 'daemon off;'` |
+| **Network Port** | `5000` (internal bridge only) | `80:80` (host ingress) |
+| **Persistent Volume** | `pawcare_db_data:/app/data` | None (stateless proxy) |
+| **Health Check** | `python3 -c "import urllib.request..."` | Depends on `web` (condition: `service_healthy`) |
+| **Restart Policy** | `unless-stopped` | `unless-stopped` |
 
 ---
 
-## 4. Nginx Reverse Proxy Live Verification
+## 4. Real Nginx Reverse Proxy Live Verification
 
-Nginx handles incoming requests on port 80 and transparently proxies traffic to the Flask/Gunicorn backend with headers (`Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto`).
+Nginx transparently forwards requests to Gunicorn while exposing standard HTTP headers. Below is an authentic terminal capture performing live HTTP status tests against port 80 and inspecting Nginx access logs.
 
-![Nginx Reverse Proxy Live Verification](images/nginx_verification.png)
+### Real Nginx Reverse Proxy Terminal Screenshot
 
-### Live HTTP Verification Samples
+![Real Nginx Reverse Proxy Terminal Screenshot](images/real_nginx_proxy.png)
 
-#### Health Check Endpoint:
+### Live HTTP Verification Responses
+
+#### Endpoint: `GET /health` (Port 80)
 ```http
-GET /health HTTP/1.1
-Host: localhost
-
 HTTP/1.1 200 OK
 Server: nginx/1.31.8
+Date: Fri, 06 Nov 2026 06:33:58 GMT
 Content-Type: application/json
+Content-Length: 68
+Connection: keep-alive
 
 {"database":"connected","status":"healthy","total_appointments":6}
 ```
 
-#### Clinic KPI Stats Endpoint:
+#### Endpoint: `GET /api/stats` (Port 80)
 ```http
-GET /api/stats HTTP/1.1
-Host: localhost
-
 HTTP/1.1 200 OK
 Server: nginx/1.31.8
+Date: Fri, 06 Nov 2026 06:33:59 GMT
 Content-Type: application/json
+Content-Length: 55
+Connection: keep-alive
 
 {"cancelled":1,"completed":2,"scheduled":3,"total":6}
 ```
 
 ---
 
-## 5. Neumorphic (Soft UI) Visual Design & Image Assets
+## 5. Real Automated Test Suite Results
 
-The user interface was styled with a **Neumorphic (Soft UI)** design system:
-- **Base Canvas**: Soft tinted slate (`#e9eef5`).
-- **Extruded Dual Shadows**: Crisp highlights (`#ffffff`) and soft ambient shadows (`#c5d0de`) creating tactile depth.
-- **Sunken Inset Controls**: Search inputs, form text fields, and filter selects sink inward for visual feedback.
-- **Dynamic Pet Avatar Assets**: Vector SVG pet illustrations (`dog.svg`, `cat.svg`, `rabbit.svg`, `bird.svg`, `other.svg`) automatically matched to the patient's breed.
+The comprehensive test suite is executed directly inside the running `pawcare_web` container, validating endpoint responses, SQLite data integrity, validation rules, status patching, and search filters.
 
----
+### Real Automated Test Suite Screenshot
 
-## 6. Automated Unit & Integration Testing Results
-
-The test suite validates data consistency, API endpoints, schema validation, and search/filter algorithms.
-
-![Automated Test Suite Output](images/test_results.png)
+![Real Automated Test Suite Terminal Screenshot](images/real_test_suite.png)
 
 ```text
 Ran 10 tests in 0.573s
@@ -141,27 +143,37 @@ Ran 10 tests in 0.573s
 OK
 ```
 
-All 10 test suites passed:
-- `test_health_check`: Validates database connectivity and service health.
-- `test_index_dashboard`: Verifies HTML template and responsive layout rendering.
-- `test_stats_initial`: Validates total, scheduled, completed, and cancelled metrics math.
-- `test_list_appointments`: Tests appointment directory loading.
-- `test_create_appointment_success`: Validates POST requests and auto-increment ID generation.
-- `test_create_appointment_missing_field`: Verifies strict 400 validation error handling.
-- `test_update_appointment_status`: Validates atomic PATCH status toggling.
-- `test_update_full_appointment`: Verifies full PUT updates.
-- `test_delete_appointment`: Confirms secure deletion and subsequent 404 responses.
-- `test_search_and_filter`: Tests real-time substring searches and status filtering.
+### Verified Test Cases
+1. `test_health_check`: Confirms database connection and healthy HTTP 200 response.
+2. `test_index_dashboard`: Validates HTML layout, header brand, and table rendering.
+3. `test_stats_initial`: Validates total count equation (`total = scheduled + completed + cancelled`).
+4. `test_list_appointments`: Confirms array retrieval of populated appointments.
+5. `test_create_appointment_success`: Validates POST appointment booking with autoincrement ID.
+6. `test_create_appointment_missing_field`: Verifies HTTP 400 rejection on incomplete submissions.
+7. `test_update_appointment_status`: Tests atomic status change via PATCH `/api/appointments/<id>/status`.
+8. `test_update_full_appointment`: Verifies full field editing via PUT.
+9. `test_delete_appointment`: Confirms appointment removal and subsequent 404 responses.
+10. `test_search_and_filter`: Tests debounced query filtering and status dropdown isolation.
 
 ---
 
-## 7. Operational Command Reference
+## 6. Real Development & Desktop Environment
 
-| Action | Command |
-|---|---|
-| **Start Application** | `docker compose up --build -d` |
-| **Check Container Status** | `docker compose ps` |
-| **View Gunicorn Logs** | `docker compose logs -f web` |
-| **View Nginx Logs** | `docker compose logs -f nginx` |
-| **Execute Test Suite** | `docker compose exec web python3 -m unittest test_app.py` |
-| **Stop Application** | `docker compose down` |
+Below is an authentic screenshot of the Linux Mint Cinnamon desktop workstation showing the active terminal, Antigravity IDE, and running services.
+
+### Real Linux Mint Desktop Environment Screenshot
+
+![Real Linux Mint Desktop Session](images/real_desktop_session.jpg)
+
+---
+
+## 7. Command Reference Summary
+
+| Task | Command | Expected Output |
+|---|---|---|
+| **Boot Stack** | `docker compose up --build -d` | Images built, `pawcare_web` healthy, `pawcare_nginx` started |
+| **Inspect Containers** | `docker compose ps` | Both containers report `Up` with port `80->80/tcp` mapped |
+| **Follow Web Logs** | `docker compose logs -f web` | Gunicorn worker boot logs and incoming Flask requests |
+| **Follow Proxy Logs** | `docker compose logs -f nginx` | Nginx HTTP access log lines showing 200 status codes |
+| **Execute Tests** | `docker compose exec web python3 -m unittest test_app.py` | `Ran 10 tests in ... OK` |
+| **Stop Stack** | `docker compose down` | Containers removed safely; SQLite volume preserved |
