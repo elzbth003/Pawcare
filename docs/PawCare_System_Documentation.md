@@ -6,34 +6,34 @@
 **WSGI Application Server**: Gunicorn 22.0.0 (2 Workers, 2 Threads)  
 **Reverse Proxy**: Nginx 1.31 Alpine (Port 80 to Port 5000)  
 **Database**: SQLite3 with WAL Mode & Persistent Docker Volume Storage  
-**Frontend Design**: Neumorphic Soft UI, Vanilla JavaScript, Breed-Aware Pet Avatars  
+**Frontend Design**: Full-Screen Fluid Neumorphic (Soft UI), Vanilla JavaScript, Breed-Aware Pet Avatars  
 **Host Environment**: Linux Mint Cinnamon / Ubuntu LTS
 
 ---
 
-## 1. Executive Summary & Live Dashboard Overview
+## 1. Executive Summary & Full-Screen Dashboard Overview
 
-The **PawCare Pet Clinic Management System** is a full-stack, containerized veterinary practice management application built to streamline patient consultation scheduling, triage status tracking, and clinical directory management.
+The **PawCare Pet Clinic Management System** is a full-stack, containerized veterinary practice management platform engineered to streamline patient scheduling, triage management, and clinical record keeping.
 
-### Real System Dashboard Screenshot (Running on `http://localhost`)
+### Full-Screen Dashboard Screenshot (Running on `http://localhost`)
 
-![Real PawCare Clinic Dashboard running in Firefox](images/dashboard_overview.jpg)
+![PawCare Full-Screen Fluid Dashboard](images/real_dashboard_fullscreen.png)
 
 ### Core UI Capabilities
 
-1. **Clinic Metric Counter Cards**:
-   - **Total Appointments**: Dynamically calculated total of all recorded patient records.
-   - **Scheduled Appointments**: Pending or upcoming patient visits.
-   - **Completed Appointments**: Successfully concluded consultations.
-   - **Cancelled Appointments**: Cancelled visits or rescheduled patients.
-2. **Real-time Live Search**: Instant debounced filtering across Pet Name, Species/Breed, Owner Name, Contact Phone, and Medical Service.
-3. **One-Click Inline Status Updating**: Receptionists and veterinarians can toggle an appointment's status (`Scheduled`, `Completed`, `Cancelled`) directly in the table row without opening a menu.
-4. **Breed-Aware Visual Avatars**: Patient table rows and modal dialogues automatically render matching vector pet illustrations (Dogs, Cats, Rabbits, Birds, and Other species).
-5. **Interactive Modals**: Seamless appointment creation and editing with field validation, clinical notes, and safe deletion confirmation dialogs.
+1. **Full-Screen Responsive Layout**: Stretches across ultra-wide and standard displays with fluid card scaling and edge-to-edge table presentation.
+2. **Real-time Metric Counters**:
+   - **Total Appointments**: Live count of all recorded patient visits.
+   - **Scheduled Appointments**: Pending or upcoming patient consultations.
+   - **Completed Appointments**: Successfully concluded appointments.
+   - **Cancelled Appointments**: Cancelled or rescheduled visits.
+3. **Instant Live Search**: Real-time debounced search by pet name, breed, owner name, phone number, and service.
+4. **One-Click Inline Status Switching**: Toggle between `Scheduled`, `Completed`, and `Cancelled` directly in the table row without opening sub-menus.
+5. **Breed-Aware Pet Avatars**: Vector SVG illustrations automatically match dogs, cats, rabbits, birds, and other animals.
 
 ---
 
-## 2. Real System Architecture & Network Topology
+## 2. System Architecture & Network Topology
 
 The application enforces strict separation of concerns, ensuring Python and WSGI processes are never directly exposed to external networks:
 
@@ -71,9 +71,9 @@ The application enforces strict separation of concerns, ensuring Python and WSGI
 
 ---
 
-## 3. Real Docker Compose & Volume Storage Verification
+## 3. Real Docker Multi-Container Architecture & Volume Storage
 
-Below is an authentic screenshot captured from the active Linux Mint terminal session demonstrating the running containers, their health status, and the persistent Docker volume.
+Both containers are orchestrated with `docker-compose.yml`. Below is the real terminal capture demonstrating the container states, ports, healthchecks, and the persistent SQLite Docker volume.
 
 ### Real Docker Compose Terminal Screenshot
 
@@ -157,17 +157,7 @@ OK
 
 ---
 
-## 6. Real Development & Desktop Environment
-
-Below is an authentic screenshot of the Linux Mint Cinnamon desktop workstation showing the active terminal, Antigravity IDE, and running services.
-
-### Real Linux Mint Desktop Environment Screenshot
-
-![Real Linux Mint Desktop Session](images/real_desktop_session.jpg)
-
----
-
-## 7. Command Reference Summary
+## 6. Operational Command Reference
 
 | Task | Command | Expected Output |
 |---|---|---|
